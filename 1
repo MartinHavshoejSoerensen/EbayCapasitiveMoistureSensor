@@ -1,0 +1,52 @@
+#include <Arduino.h>
+
+#define inputPin A0
+#define delayTime 500
+
+int inputVal = 0;
+int inputValMin = 589; // Most moist.
+int inputValMax = 650; // Least moist.
+int corrInputVal;
+int corrInputValPct;
+
+void setup(){
+  Serial.begin(9600);
+
+  pinMode(inputPin, INPUT);
+}
+
+void readData(){
+    inputVal = analogRead(inputPin);
+}
+
+void processData(){
+    corrInputVal = map(inputVal, inputValMin, inputValMax, 0, 1023);
+    corrInputVal = constrain(corrInputVal, 0, 1023);
+
+    corrInputValPct = map(corrInputVal, 0, 1023, 100, 0);  
+}
+
+void serialPrint(){
+    Serial.println("********************");
+    Serial.println("  ");
+    Serial.print("inputVal      : ");
+    Serial.println(inputVal);
+    Serial.print("corrInputVal  : ");
+    Serial.println(corrInputVal);
+    Serial.print("corrInputVal% : ");
+    Serial.print(corrInputValPct);
+    Serial.println(" %");
+    Serial.println("  ");
+    Serial.println("********************");
+    Serial.println("  ");
+}
+
+void loop(){
+    readData();
+
+    processData();
+
+    serialPrint();
+
+    delay(delayTime);
+}
